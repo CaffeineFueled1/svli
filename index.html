@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SVLI</title>
+
+  <script>
+    function addVariable() {
+      const container = document.getElementById('variableContainer');
+      const variableCount = container.children.length + 1;
+      const newVariableGroup = document.createElement('div');
+      newVariableGroup.className = 'variable-group';
+      newVariableGroup.innerHTML = `<textarea placeholder="Enter one word per line for [var${variableCount}]" rows="5" class="variableInput"></textarea>`;
+      container.appendChild(newVariableGroup);
+    }
+
+    function customizeText() {
+      const inputText = document.getElementById('inputText').value;
+      const variableInputs = document.querySelectorAll('.variableInput');
+      const wordArrays = Array.from(variableInputs).map(textarea => textarea.value.split('\n').map(word => word.trim()));
+
+      const maxLength = Math.max(...wordArrays.map(words => words.length));
+      let results = [];
+
+      for (let i = 0; i < maxLength; i++) {
+        let modifiedText = inputText;
+        wordArrays.forEach((words, index) => {
+          const placeholder = new RegExp(`\\[var${index + 1}\\]`, 'g');
+          const word = words[i % words.length] || '';
+          modifiedText = modifiedText.replace(placeholder, word);
+        });
+        results.push(modifiedText);
+      }
+
+      document.getElementById('outputContainer').value = results.join('\n');
+    }
+
+    function exportToTextFile() {
+      const text = document.getElementById('outputContainer').value;
+      const blob = new Blob([text], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'svli-output.txt';
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    function copyToClipboard() {
+      const outputText = document.getElementById('outputContainer');
+      outputText.select();
+      document.execCommand('copy');
+      alert('Copied to clipboard!');
+    }
+  </script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 20px;
+      color: #111;
+      background-color: #fefefe;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #fff;
+    }
+
+    h1 {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+
+    input,
+    button {
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 1em;
+    }
+
+    textarea {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .output {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+    }
+
+    .variables {
+      margin-top: 10px;
+    }
+
+    .variable-group {
+      margin-bottom: 20px;
+    }
+
+    .small-button {
+      font-size: 0.8em;
+      padding: 5px;
+    }
+    .yellow-button {
+      margin-right: 10px;
+      background-color: #fbb000;
+      border: none;
+      color: white;
+      padding: 3px 7px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .blue-button {
+      margin-right: 10px;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      padding: 3px 7px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .green-button {
+      margin-right: 10px;
+      background-color: #28a745;
+      border: none;
+      color: white;
+      padding: 3px 7px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    hr {
+      color: #ddd;
+      border-top: 1px solid #ddd;
+    }
+    .footer {
+
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Simple Variable List Iterator</h1>
+    <h3>Template:</h3>
+    <textarea id="inputText">Example: host [var1] has IP [var2].</textarea>
+    <hr>
+    <h3>Variables:</h3>
+    <div id="variableContainer" class="variables">
+      <div class="variable-group">
+        <textarea placeholder="Enter one word per line for [var1]" rows="5" class="variableInput"></textarea>
+      </div>
+      <div class="variable-group">
+        <textarea placeholder="Enter one word per line for [var2]" rows="5" class="variableInput"></textarea>
+      </div>
+    </div>
+    <button class="yellow-button" onclick="addVariable()">Add Variable</button><br>
+    <hr>
+    <button class="green-button" onclick="customizeText()">RUN</button>
+    <textarea id="outputContainer" class="output" row="10" readonly></textarea>
+    <button class="blue-button" onclick="copyToClipboard()">Copy</button>
+    <button class="blue-button" onclick="exportToTextFile()">Export to File</button>
+  </div>
+
+</body>
+</html>
