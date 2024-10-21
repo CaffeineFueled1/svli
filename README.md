@@ -1,8 +1,8 @@
 # Simple Variable List Iterator
 
-Not even sure if the name makes sense, but I hope it makes sense.
+Choosing names was never my strength. 
 
-Let me know if there is a better tool. Didn't came across so I created this. It works for me, that is all care of.
+Let me know if there is a better tool. It works for me tho.
 
 Works with 1 to `n` variables. If a line is empty, it will add `null` (as in nothing). `[var1]` should be the longest list.
 
